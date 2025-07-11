@@ -1,0 +1,17 @@
+#root {
+  border: 1px solid #ccc;
+  padding:4rem 2rem;
+  text-align: center;
+}
+
+.logo {
+  margin: auto;
+  will-change: filter;
+  transition: filter 200ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}

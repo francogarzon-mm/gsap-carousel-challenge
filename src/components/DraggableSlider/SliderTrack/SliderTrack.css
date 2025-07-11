@@ -1,0 +1,6 @@
+.slider-track {
+  display: flex;
+  cursor: grab;
+  user-select: none;
+  border: 1px solid red;
+}
