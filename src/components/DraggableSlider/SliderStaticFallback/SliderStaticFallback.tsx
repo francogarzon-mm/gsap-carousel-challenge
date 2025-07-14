@@ -15,9 +15,11 @@ const SliderStaticFallback = forwardRef<
 >(({ items, cardWidth, cardMarginPx }, ref) => {
   return (
     <>
-      <h1 style={{ fontSize: "58px", fontWeight: 900, textAlign: "start" }}>
-        Lorem ipsum
-      </h1>
+      <div style={{ padding: "50px 0" }}>
+        <h1 style={{ fontSize: "58px", fontWeight: 900, textAlign: "start" }}>
+          Lorem ipsum
+        </h1>
+      </div>
       <div className="slider-fallback-wrapper" ref={ref}>
         {items.map((item) => (
           <div

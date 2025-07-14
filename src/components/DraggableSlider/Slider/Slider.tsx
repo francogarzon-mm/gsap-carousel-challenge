@@ -65,11 +65,11 @@ const Slider = ({ items, cardsItemsInView = 3 }: SliderProps) => {
 
   const goToIndex = useCallback(
     (newIndex: number) => {
-      const clamped = Math.max(0, Math.min(maxIndex, newIndex));
-      setCurrentItemIndex(clamped);
+      const newIndexLimited = Math.max(0, Math.min(maxIndex, newIndex));
+      setCurrentItemIndex(newIndexLimited);
       if (sliderTrackRef.current) {
         gsap.to(sliderTrackRef.current, {
-          x: -clamped * (cardWidth + cardMarginPx),
+          x: -newIndexLimited * (cardWidth + cardMarginPx),
           duration: 0.4,
           ease: "power2.out",
         });
