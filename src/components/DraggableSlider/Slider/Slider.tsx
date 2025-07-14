@@ -4,6 +4,8 @@ import gsap from "gsap";
 import { Draggable } from "gsap/Draggable";
 import SliderControls from "../SliderControls/SliderControls";
 import SliderTrack from "../SliderTrack/SliderTrack";
+import { calculateVisibleCardsInView } from "./Slider.util";
+import SliderStaticFallback from "../SliderStaticFallback/SliderStaticFallback";
 
 gsap.registerPlugin(Draggable);
 
@@ -24,23 +26,9 @@ export type Item = {
 type SliderProps = {
   items: Item[];
   cardsItemsInView?: number;
-  cardMarginPx?: number;
 };
 
-function calculateVisibleCardsInView(containerWidth: number) {
-  if (containerWidth >= 1920) return 4;
-  if (containerWidth >= 1440) return 3;
-  if (containerWidth >= 1280) return 3;
-  if (containerWidth >= 900) return 3;
-  if (containerWidth >= 764) return 2;
-  return 1;
-}
-
-const Slider = ({
-  items,
-  cardsItemsInView = 3,
-  cardMarginPx = 18,
-}: SliderProps) => {
+const Slider = ({ items, cardsItemsInView = 3 }: SliderProps) => {
   const sliderWrapperRef = useRef<HTMLDivElement>(null);
   const sliderTrackRef = useRef<HTMLDivElement>(null);
   const draggableRef = useRef<Draggable | null>(null);
@@ -50,12 +38,17 @@ const Slider = ({
   const [currentItemIndex, setCurrentItemIndex] = useState(0);
   const [currentSliderTrackWitdth, setCurrentSliderTrackWitdth] = useState(0);
 
+  const maxIndex = Math.max(0, items.length - visibleCards);
+  const cardMarginPx = 12;
+
   // Actualiza layout y calcula el ancho de la cada card cuando cambia dinamicamente el viewport
   const updateLayout = useCallback(() => {
     if (!sliderWrapperRef.current) return;
     const sliderWrapper = sliderWrapperRef.current.offsetWidth;
+    // Calcula el número de cards visibles en función del ancho del slider
     const visiblesCardsInView = calculateVisibleCardsInView(sliderWrapper);
 
+    // Calcula el ancho de cada card teniendo en cuenta el margen
     const totalMargin = (visiblesCardsInView - 1) * cardMarginPx;
     const actualCardWidth = (sliderWrapper - totalMargin) / visiblesCardsInView;
 
@@ -63,14 +56,12 @@ const Slider = ({
     setCardWidth(actualCardWidth);
   }, [cardMarginPx]);
 
-  // Efecto para actualizar el layout al montar el componente y al cambiar el tamaño de la ventana
+  // Actualiza el layout al montar el componente y al cambiar el tamaño de la ventana
   useEffect(() => {
     updateLayout();
     window.addEventListener("resize", updateLayout);
     return () => window.removeEventListener("resize", updateLayout);
   }, [updateLayout]);
-
-  const maxIndex = Math.max(0, items.length - visibleCards);
 
   const goToIndex = useCallback(
     (newIndex: number) => {
@@ -86,29 +77,18 @@ const Slider = ({
     },
     [maxIndex, cardWidth, cardMarginPx]
   );
-  const jumpByGroup = items.length > 10;
 
+  // Navega a un índice específico dentro del slider
   const goNext = useCallback(() => {
-    const step = jumpByGroup ? visibleCards : 1;
-    const nextIndex = currentItemIndex + step;
-    if (nextIndex <= maxIndex) {
-      goToIndex(nextIndex);
-    } else {
-      goToIndex(maxIndex);
-    }
-  }, [jumpByGroup, visibleCards, currentItemIndex, maxIndex, goToIndex]);
+    if (currentItemIndex < maxIndex) goToIndex(currentItemIndex + 1);
+  }, [currentItemIndex, maxIndex, goToIndex]);
 
+  // Navega al índice anterior dentro del slider
   const goPrev = useCallback(() => {
-    const step = jumpByGroup ? visibleCards : 1;
-    const prevIndex = currentItemIndex - step;
-    if (prevIndex >= 0) {
-      goToIndex(prevIndex);
-    } else {
-      goToIndex(0);
-    }
-  }, [jumpByGroup, visibleCards, currentItemIndex, goToIndex]);
+    if (currentItemIndex > 0) goToIndex(currentItemIndex - 1);
+  }, [currentItemIndex, goToIndex]);
 
-  // Inicializa o reinicializa Draggable al cambiar layout
+  // Inicializa Draggable y se configura en el slider track
   useEffect(() => {
     if (!sliderTrackRef.current) return;
 
@@ -125,7 +105,7 @@ const Slider = ({
       maxDuration: 0.4,
       onDragEnd: function () {
         const currentX = this.x;
-        const groupSize = jumpByGroup ? visibleCards : 1;
+        const groupSize = 1;
         const newIdx =
           Math.round(-currentX / slideSize / groupSize) * groupSize;
         goToIndex(newIdx);
@@ -136,6 +116,7 @@ const Slider = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cardWidth, goToIndex, visibleCards]);
 
+  // Maneja la navegación por teclado
   const onKeyboardPress = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === "ArrowRight") {
@@ -150,8 +131,16 @@ const Slider = ({
   );
 
   if (items.length < 4) {
-    return <div>Cards</div>;
+    return (
+      <SliderStaticFallback
+        items={items}
+        cardWidth={cardWidth}
+        cardMarginPx={cardMarginPx}
+        ref={sliderWrapperRef}
+      />
+    );
   }
+
   return (
     <div
       role="region"

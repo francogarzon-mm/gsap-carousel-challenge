@@ -3,7 +3,7 @@ import "./SliderCard.css";
 
 type SliderCardProps = {
   item: Item;
-  width: number;
+  width?: number;
   gap: number;
 };
 
@@ -45,7 +45,11 @@ const SliderCard = ({ item, width, gap }: SliderCardProps) => {
           <div className="slider-card-cta">
             <p>{item.cta.text}</p>
             <span className="slider-card-cta-icon">
-              <img src="/icon/arrow-right-icon.svg" alt="" aria-hidden="true" />
+              <img
+                src="public/icon/arrow-right-icon.svg"
+                alt=""
+                aria-hidden="true"
+              />
             </span>
           </div>
         </div>

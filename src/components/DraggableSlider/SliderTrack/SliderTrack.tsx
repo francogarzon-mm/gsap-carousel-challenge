@@ -7,7 +7,7 @@ type SliderDraggableTrackProps = {
   cardWidth: number;
   cardMarginPx: number;
   items: Item[];
-  maxX?: number; // Optional prop to set max X position for Draggable
+  maxX?: number;
 };
 
 const SliderTrack = forwardRef<HTMLDivElement, SliderDraggableTrackProps>(
