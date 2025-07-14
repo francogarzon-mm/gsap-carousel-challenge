@@ -90,7 +90,7 @@ const Slider = ({ items, cardsItemsInView = 3 }: SliderProps) => {
 
   // Inicializa Draggable y se configura en el slider track
   useEffect(() => {
-    if (!sliderTrackRef.current) return;
+    if (!sliderTrackRef.current || items.length <= 4) return;
 
     draggableRef.current?.kill();
 
