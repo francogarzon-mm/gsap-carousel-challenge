@@ -102,12 +102,9 @@ const Slider = ({ items, cardsItemsInView = 3 }: SliderProps) => {
       type: "x",
       bounds: { minX: maxX, maxX: 0 },
       inertia: true,
-      maxDuration: 0.4,
       onDragEnd: function () {
         const currentX = this.x;
-        const groupSize = 1;
-        const newIdx =
-          Math.round(-currentX / slideSize / groupSize) * groupSize;
+        const newIdx = Math.round(-currentX / slideSize);
         goToIndex(newIdx);
       },
     })[0];
@@ -151,12 +148,15 @@ const Slider = ({ items, cardsItemsInView = 3 }: SliderProps) => {
       className="slider-wrapper"
       onKeyDown={onKeyboardPress}
     >
-      <SliderControls
-        onPrev={goPrev}
-        onNext={goNext}
-        index={currentItemIndex}
-        maxIndex={maxIndex}
-      />
+      <div className="slider-header">
+        <h1 style={{ fontSize: "58px", fontWeight: 900 }}>Lorem ipsum</h1>
+        <SliderControls
+          onPrev={goPrev}
+          onNext={goNext}
+          index={currentItemIndex}
+          maxIndex={maxIndex}
+        />
+      </div>
       <SliderTrack
         ref={sliderTrackRef}
         items={items}
