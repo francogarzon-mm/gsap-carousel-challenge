@@ -46,7 +46,7 @@ const SliderCard = ({ item, width, gap }: SliderCardProps) => {
             <p>{item.cta.text}</p>
             <span className="slider-card-cta-icon">
               <img
-                src="public/icon/arrow-right-icon.svg"
+                src="icons/arrow-right-icon.svg"
                 alt=""
                 aria-hidden="true"
               />
