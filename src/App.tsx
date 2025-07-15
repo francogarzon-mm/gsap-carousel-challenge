@@ -1,4 +1,4 @@
-import gsapIcon from "/gsap-hero-icon.svg";
+import gsapIcon from "/icons/gsap-hero-icon.svg";
 import "./App.css";
 import DemoSlider from "./components/DemoSlider/DemoSlider";
 
